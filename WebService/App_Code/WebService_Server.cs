@@ -27,14 +27,26 @@ public class WebService_Server : System.Web.Services.WebService
     [WebMethod()]
     public string HelloWorld(string strMessage)
     {
-        return "Hello Everybody!!  " + strMessage  ;
+        return "Hello Everybody!!  " + strMessage;
     }
     [WebMethod()]
-    public void MessageLine(string token, string msg)
+    public void MessageLine(string token, string msg, string pictureUrl,int stickerPackageID,int stickerID)
     {
         // https://notify-bot.line.me/my/ เข้าเว็บ
         var request = (HttpWebRequest)WebRequest.Create("https://notify-api.line.me/api/notify");
         var postData = string.Format("message={0}", msg);
+        /*if (stickerPackageID > 0 && stickerID > 0)
+        {
+            var stickerPackageId = string.Format("stickerPackageId={0}", stickerPackageID);
+            var stickerId = string.Format("stickerId={0}", stickerID);
+            postData += "&" + stickerPackageId.ToString() + "&" + stickerId.ToString();
+        }
+        if (pictureUrl != "")
+        {
+            var imageThumbnail = string.Format("imageThumbnail={0}", pictureUrl);
+            var imageFullsize = string.Format("imageFullsize={0}", pictureUrl);
+            postData += "&" + imageThumbnail.ToString() + "&" + imageFullsize.ToString();
+        }*/
         var data = Encoding.UTF8.GetBytes(postData);
 
         request.Method = "POST";
@@ -46,15 +58,16 @@ public class WebService_Server : System.Web.Services.WebService
         {
             stream.Write(data, 0, data.Length);
         }
+        //using (var stream = request.GetRequestStream()) stream.Write(data, 0, data.Length);
 
         var response = (HttpWebResponse)request.GetResponse();
         var responseString = new StreamReader(response.GetResponseStream()).ReadToEnd();
     }
 
     [WebMethod()]
-    public void MessageToServer(string token, string msg)
+    public void MessageToServer(string token, string msg, string pictureUrl, int stickerPackageID, int stickerID)
     {
-        MessageLine(token, msg);
+        MessageLine(token, msg, pictureUrl, stickerPackageID, stickerID);
     }
 
 }
